@@ -1,0 +1,86 @@
+{
+    "/authentication/login": {
+        "post": {
+            "summary": "Search Spotify Data",
+            "description": "",
+            "tags": [
+                "Authentication"
+            ],
+            "requestBody": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "example": {
+                            "username": "admin",
+                            "password": "admin"
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "OK",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "status": "200",
+                                "statusCode": "200",
+                                "statusText": "string",
+                                "message": "string"
+                            }
+                        }
+                    }
+                },
+                "400": { "description": "Error | Failed From Client" },
+                "401": { "description": "Error | Unauthorized" },
+                "404": { "description": "Error | Not Found" },
+                "500": { "description": "Error | Error From Server" }
+            }
+        }
+    },
+    "/authentication/register": {
+        "post": {
+            "summary": "Search Spotify Data",
+            "description": "",
+            "tags": [
+                "Authentication"
+            ],
+            "requestBody": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "example": {
+                            "username": "admin",
+                            "password": "admin",
+                            "firstname": "admin",
+                            "lastname": "admin",
+                            "fullname": "admin",
+                            "phonenumber": "083498547382",
+                            "companyname": "PT Admin",
+                            "email": "admin@example.com"
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "OK",
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "status": "200",
+                                "statusCode": "200",
+                                "statusText": "string",
+                                "message": "string"
+                            }
+                        }
+                    }
+                },
+                "400": { "description": "Error | Failed From Client" },
+                "401": { "description": "Error | Unauthorized" },
+                "404": { "description": "Error | Not Found" },
+                "500": { "description": "Error | Error From Server" }
+            }
+        }
+    }
+}

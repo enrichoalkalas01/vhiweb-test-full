@@ -2,7 +2,7 @@ const swaggerUi = require("swagger-ui-express")
 const swaggerJsdoc = require("swagger-jsdoc")
 
 const authenticationDocs = require("../src/authentication/docs/authentication.json")
-// const productDocs = require("../sr")
+const productDocs = require("../src/products/docs/products.json")
 
 const baseURL = process.env.BASE_URL || "http://localhost:5000"
 const options = {
@@ -31,7 +31,7 @@ const options = {
         },
         paths: {
             ...authenticationDocs,
-            // ...productDocs,
+            ...productDocs,
         },
     },
     apis: [

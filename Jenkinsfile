@@ -3,9 +3,16 @@ pipeline {
 
     environment {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
+        GIT_TOOL = 'Default'
     }
 
     stages {
+        stage('Verify Git Installation') {
+            steps {
+                sh 'git --version'
+            }
+        }
+
         stage('Checkout') {
             steps {
                 // Ambil kode dari repository

@@ -13,10 +13,10 @@ pipeline {
             }
         }
 
-        stage('Checkout') {
+        stage('Pulling The Newest Code') {
             steps {
                 // Ambil kode dari repository
-                checkout scm
+                sh 'git pull'
             }
         }
 

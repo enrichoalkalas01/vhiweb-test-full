@@ -3,67 +3,34 @@ pipeline {
 
     environment {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
+        GIT_TOOL = 'Default'
     }
 
     stages {
-        stage('Verify Git Installation') {
-            steps {
-                sh 'git --version'
-            }
-        }
-
-        stage('Git Checkout Master Branch') {
-            steps {
-                sh 'git fetch --all'
-                sh 'git checkout master'
-            }
-        }
-
-        stage('Pulling The Newest Code') {
-            steps {
-                sh 'git pull origin master'
-            }
-        }
-
-        stage('Check Changes in Frontend and Backend') {
+        stage('Verify and Pull the Latest Code from Master') {
             steps {
                 script {
-                    // Check if frontend or backend directories have changed
-                    def frontendChanged = sh(script: "git diff --name-only HEAD^ | grep '^frontend/' || true", returnStatus: true) == 0
-                    def backendChanged = sh(script: "git diff --name-only HEAD^ | grep '^backend/' || true", returnStatus: true) == 0
-
-                    if (frontendChanged || backendChanged) {
-                        echo 'Changes detected in frontend or backend, rebuilding services...'
-                    } else {
-                        echo 'No changes detected in frontend or backend, skipping rebuild...'
-                    }
-
-                    // Set environment variables based on what changed
-                    if (frontendChanged) {
-                        env.REBUILD_FRONTEND = 'true'
-                    }
-                    if (backendChanged) {
-                        env.REBUILD_BACKEND = 'true'
-                    }
+                    sh '''
+                        git --version
+                        git fetch origin master
+                        git reset --hard origin/master
+                        git pull origin master
+                    '''
                 }
             }
         }
 
-        stage('Build and Deploy Containers') {
+        stage('Rebuild and Deploy Containers') {
             steps {
                 script {
-                    // Rebuild frontend if there were changes
-                    if (env.REBUILD_FRONTEND == 'true') {
-                        sh 'docker-compose -f $DOCKER_COMPOSE_FILE build frontend'
-                    }
+                    // Step 1: Stop and remove all existing containers
+                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE down'
 
-                    // Rebuild backend if there were changes
-                    if (env.REBUILD_BACKEND == 'true') {
-                        sh 'docker-compose -f $DOCKER_COMPOSE_FILE build backend'
-                    }
+                    // Step 2: Build all containers defined in the docker-compose.yml
+                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE build'
 
-                    // Deploy containers regardless of changes
-                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE up -d frontend backend'
+                    // Step 3: Bring up all containers in detached mode
+                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE up -d'
                 }
             }
         }
@@ -84,6 +51,12 @@ pipeline {
 
         failure {
             echo 'Deployment gagal!'
+        }
+        
+        always {
+            script {
+                echo 'Pipeline selesai dijalankan.'
+            }
         }
     }
 }

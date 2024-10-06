@@ -13,8 +13,8 @@ services:
       MYSQL_PASSWORD: vhiweb123!
     ports:
       - "8201:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
+    # volumes:
+    #   - mysql_data:/var/lib/mysql
     deploy:
       resources:
         limits:

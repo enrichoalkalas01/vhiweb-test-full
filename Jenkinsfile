@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         DOCKER_COMPOSE_FILE = 'docker-compose.yml'
-        GIT_TOOL = 'Default'
     }
 
     stages {
@@ -13,9 +12,10 @@ pipeline {
             }
         }
 
-        stage('Git Checkout To Master Branch') {
+        stage('Git Checkout Master Branch') {
             steps {
-                sh 'git checkout origin/master'
+                sh 'git fetch --all'
+                sh 'git checkout master'
             }
         }
 
@@ -25,30 +25,44 @@ pipeline {
             }
         }
 
-        stage('Docker Compose UP') {
+        stage('Check Changes in Frontend and Backend') {
             steps {
                 script {
-                    sh 'docker-compose up -d'
+                    // Check if frontend or backend directories have changed
+                    def frontendChanged = sh(script: "git diff --name-only HEAD^ | grep '^frontend/' || true", returnStatus: true) == 0
+                    def backendChanged = sh(script: "git diff --name-only HEAD^ | grep '^backend/' || true", returnStatus: true) == 0
+
+                    if (frontendChanged || backendChanged) {
+                        echo 'Changes detected in frontend or backend, rebuilding services...'
+                    } else {
+                        echo 'No changes detected in frontend or backend, skipping rebuild...'
+                    }
+
+                    // Set environment variables based on what changed
+                    if (frontendChanged) {
+                        env.REBUILD_FRONTEND = 'true'
+                    }
+                    if (backendChanged) {
+                        env.REBUILD_BACKEND = 'true'
+                    }
                 }
             }
         }
 
-        stage('Build Frontend and Backend') {
+        stage('Build and Deploy Containers') {
             steps {
                 script {
-                    // Build ulang Docker images untuk frontend dan backend
-                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE build frontend backend'
-                }
-            }
-        }
+                    // Rebuild frontend if there were changes
+                    if (env.REBUILD_FRONTEND == 'true') {
+                        sh 'docker-compose -f $DOCKER_COMPOSE_FILE build frontend'
+                    }
 
-        stage('Deploy Containers') {
-            steps {
-                script {
-                    // Hentikan container yang sedang berjalan
-                    sh 'docker-compose -f $DOCKER_COMPOSE_FILE down'
+                    // Rebuild backend if there were changes
+                    if (env.REBUILD_BACKEND == 'true') {
+                        sh 'docker-compose -f $DOCKER_COMPOSE_FILE build backend'
+                    }
 
-                    // Jalankan ulang container dalam mode detached (-d)
+                    // Deploy containers regardless of changes
                     sh 'docker-compose -f $DOCKER_COMPOSE_FILE up -d frontend backend'
                 }
             }
@@ -57,7 +71,6 @@ pipeline {
         stage('Cleanup') {
             steps {
                 script {
-                    // Hapus image Docker yang tidak digunakan untuk menjaga kebersihan sistem
                     sh 'docker system prune -f'
                 }
             }

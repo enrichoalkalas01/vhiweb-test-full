@@ -57,8 +57,6 @@ services:
       - "8203:5000" # Sesuaikan dengan port yang digunakan oleh Express.js
     depends_on:
       - mysql
-    volumes:
-      - ./backend:/app
     deploy:
       resources:
         limits:

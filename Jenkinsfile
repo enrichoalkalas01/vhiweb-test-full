@@ -13,10 +13,15 @@ pipeline {
             }
         }
 
+        stage('Git Checkout To Master Branch') {
+            steps {
+                sh 'git checkout origin/master'
+            }
+        }
+
         stage('Pulling The Newest Code') {
             steps {
-                // Ambil kode dari repository
-                sh 'git pull'
+                sh 'git pull origin master'
             }
         }
 

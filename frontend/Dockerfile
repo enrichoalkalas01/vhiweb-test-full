@@ -1,43 +1,39 @@
-# Gunakan image Node.js sebagai base image
+# Use node:18-alpine as base for the builder
 FROM node:18-alpine AS builder
 
-# Set work directory
+# Set the work directory
 WORKDIR /app
 
-# Copy package.json dan package-lock.json
-COPY package.json package-lock.json ./
+# Copy only necessary files to leverage caching
+COPY package.json package-lock.json next.config.mjs ./
 
-COPY next.config.mjs ./
-
-# Install dependencies
-RUN npm install --only=production
-
-# Copy seluruh source code
-COPY . .
-
-# Install dependencies untuk development
+# Install all dependencies (including devDependencies for build)
 RUN npm install
 
-# Build aplikasi
+# Copy the rest of the application source code
+COPY . .
+
+# Build the Next.js app
 RUN npm run build
 
-# Tahap kedua untuk image final
+# Production image
 FROM node:18-alpine
 
 # Set work directory
 WORKDIR /app
 
-# Copy hasil build dari tahap pertama
+# Copy only the built application and necessary files from the builder stage
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/next.config.mjs ./
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/package-lock.json ./package-lock.json
+COPY --from=builder /app/next.config.mjs ./next.config.mjs
 
-# Install hanya production dependencies
-RUN npm install --only=production
+# Install only production dependencies
+RUN npm install --only=production --frozen-lockfile
 
-# Expose port yang digunakan oleh aplikasi Next.js
+# Expose the port used by the Next.js application
 EXPOSE 3000
 
-# Jalankan aplikasi
+# Start the application
 CMD ["npm", "start"]

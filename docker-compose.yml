@@ -4,7 +4,7 @@ services:
   # MySQL service
   mysql:
     image: mysql:8.0
-    container_name: mysql
+    container_name: vhiweb-mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: vhiweb123!
@@ -15,26 +15,36 @@ services:
       - "8400:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    deploy:
+      resources:
+        limits:
+          cpus: '1'  # Maksimal 1 CPU
+          memory: '512M'  # Maksimal 512MB RAM
 
   # PHPMyAdmin service
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
+    container_name: vhiweb-phpmyadmin
     restart: always
     environment:
       PMA_HOST: mysql
       MYSQL_ROOT_PASSWORD: vhiweb123!
     ports:
-      - "8500:80"
+      - "8300:80"
     depends_on:
       - mysql
+    deploy:
+      resources:
+        limits:
+          cpus: '1'  # Maksimal 1 CPU
+          memory: '512M'  # Maksimal 512MB RAM
 
   # Backend Express JS
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: backend
+    container_name: vhiweb-backend
     restart: always
     environment:
       DATABASE_HOST: root
@@ -49,20 +59,29 @@ services:
       - mysql
     volumes:
       - ./backend:/app
+    deploy:
+      resources:
+        limits:
+          cpus: '1'  # Maksimal 1 CPU
+          memory: '512M'  # Maksimal 512MB RAM
 
   # Front End Next JS
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: frontend
+    container_name: vhiweb-frontend
     restart: always
     ports:
       - "8000:3000" # Sesuaikan dengan port yang digunakan oleh Next.js
     depends_on:
       - backend
-    volumes:
-      - ./frontend:/app
+    deploy:
+      resources:
+        limits:
+          cpus: '1'  # Maksimal 1 CPU
+          memory: '512M'  # Maksimal 512MB RAM
 
 volumes:
   mysql_data:
+    external: false

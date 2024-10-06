@@ -13,6 +13,15 @@ pipeline {
             }
         }
 
+        stage('Docker Compose UP') {
+            steps {
+                script {
+                    // Build ulang Docker images untuk frontend dan backend
+                    sh 'docker-compose up -d'
+                }
+            }
+        }
+
         stage('Build Frontend and Backend') {
             steps {
                 script {

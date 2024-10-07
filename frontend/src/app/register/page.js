@@ -1,4 +1,8 @@
-import { useState } from "react"
+"use client"
+
+import { useEffect, useState } from "react"
+import axios from "axios"
+import Swal from 'sweetalert2'
 
 export default function Page() {
     const [Username, setUsername] = useState(null)
@@ -8,6 +12,57 @@ export default function Page() {
     const [Lastname, setLastname] = useState(null)
     const [Phonenumber, setPhonenumber] = useState(null)
     const [Companyname, setCompanyname] = useState(null)
+
+    useEffect(() => {
+
+    }, [Username, Password, Email, Firstname, Lastname, Phonenumber, Companyname])
+
+    const handleForm = async (e) => {
+        e.preventDefault()
+
+        try {
+            let DataPassing = {
+                username: Username,
+                password: Password,
+                email: Email,
+                firstname: Firstname,
+                lastname: Lastname,
+                phonenumber: Phonenumber,
+                companyname: Companyname,
+            }
+
+            let config = {
+                url: `${ process.env.NEXT_PUBLIC_BASE_URL_API }/authentication/register`,
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify(DataPassing)
+            }
+
+            let response = await axios(config)
+
+            Swal.fire({
+                title: 'Success',
+                text: response?.data?.message,
+                icon: 'success',
+                confirmButtonText: 'Close'
+            })
+
+            setTimeout(() => {
+                window.location.href = "/login"
+            }, 1500)
+        } catch (error) {
+            console.log(error)
+            let message = error?.response?.data?.message || error?.message
+            Swal.fire({
+                title: 'Failed',
+                text: message,
+                icon: 'error',
+                confirmButtonText: 'Close'
+            })
+        }
+    }
 
     return (
         <>
@@ -25,37 +80,129 @@ export default function Page() {
                     </div>
                     
                     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                        <form action="#" method="POST" className="space-y-6">
+                        <form onSubmit={handleForm} className="space-y-3">
 
+                            {/* Username */}
                             <div>
-                                <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-                                    Email Address
+                                <label htmlFor="Username" className="block text-sm font-medium leading-6 text-gray-900">
+                                    Username
                                 </label>
                                 <div className="mt-2">
                                     <input
-                                        id="email"
-                                        name="email"
+                                        id="Username"
+                                        name="Username"
                                         type="text"
                                         required
-                                        autoComplete="email"
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        autoComplete="Username"
                                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
                                 </div>
                             </div>
 
+                            {/* Firstname */}
                             <div>
-                                <div className="flex items-center justify-between">
-                                    <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
-                                        Password
-                                    </label>
-                                </div>
+                                <label htmlFor="Firstname" className="block text-sm font-medium leading-6 text-gray-900">
+                                    Firstname
+                                </label>
                                 <div className="mt-2">
                                     <input
-                                        id="password"
-                                        name="password"
+                                        id="Firstname"
+                                        name="Firstname"
+                                        type="text"
+                                        required
+                                        onChange={(e) => setFirstname(e.target.value)}
+                                        autoComplete="Firstname"
+                                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Lastname */}
+                            <div>
+                                <label htmlFor="Lastname" className="block text-sm font-medium leading-6 text-gray-900">
+                                    Lastname
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        id="Lastname"
+                                        name="Lastname"
+                                        type="text"
+                                        required
+                                        onChange={(e) => setLastname(e.target.value)}
+                                        autoComplete="Lastname"
+                                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Phonenumber */}
+                            <div>
+                                <label htmlFor="Phonenumber" className="block text-sm font-medium leading-6 text-gray-900">
+                                    Phonenumber
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        id="Phonenumber"
+                                        name="Phonenumber"
+                                        type="text"
+                                        required
+                                        onChange={(e) => setPhonenumber(e.target.value)}
+                                        autoComplete="Phonenumber"
+                                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Email */}
+                            <div>
+                                <label htmlFor="Email" className="block text-sm font-medium leading-6 text-gray-900">
+                                    Email
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        id="Email"
+                                        name="Email"
+                                        type="email"
+                                        required
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        autoComplete="Email"
+                                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Companyname */}
+                            <div>
+                                <label htmlFor="Companyname" className="block text-sm font-medium leading-6 text-gray-900">
+                                    Companyname
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        id="Companyname"
+                                        name="Companyname"
+                                        type="text"
+                                        required
+                                        onChange={(e) => setCompanyname(e.target.value)}
+                                        autoComplete="Companyname"
+                                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Password */}
+                            <div>
+                                <label htmlFor="Password" className="block text-sm font-medium leading-6 text-gray-900">
+                                    Password
+                                </label>
+                                <div className="mt-2">
+                                    <input
+                                        id="Password"
+                                        name="Password"
                                         type="password"
                                         required
-                                        autoComplete="current-password"
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        autoComplete="Password"
                                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                     />
                                 </div>
@@ -64,7 +211,7 @@ export default function Page() {
                             <div>
                                 <button
                                     type="submit"
-                                    className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                    className="flex mt-6 w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 >
                                     Register Now
                                 </button>
@@ -84,6 +231,3 @@ export default function Page() {
         </>
     )
 }
-// i must fast cause i want to take another test from another company
-
-

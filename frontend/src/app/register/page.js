@@ -2,8 +2,9 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import axios from "axios"
+import Link from "next/link"
 import Swal from 'sweetalert2'
+import api from "@/lib/api"
 
 export default function RegisterPage() {
     const router = useRouter()
@@ -26,12 +27,7 @@ export default function RegisterPage() {
         e.preventDefault()
         setLoading(true)
         try {
-            const response = await axios({
-                url: `${process.env.NEXT_PUBLIC_BASE_URL_API}/authentication/register`,
-                method: 'post',
-                headers: { 'Content-Type': 'application/json' },
-                data: JSON.stringify(form),
-            })
+            const response = await api.post('/authentication/register', form)
 
             Swal.fire({
                 title: 'Account Created!',
@@ -114,9 +110,9 @@ export default function RegisterPage() {
 
                 <p className="mt-6 text-center text-sm text-gray-500">
                     Already have an account?{' '}
-                    <a href="/login" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                    <Link href="/login" className="font-semibold text-indigo-600 hover:text-indigo-500">
                         Sign in here
-                    </a>
+                    </Link>
                 </p>
             </div>
         </div>

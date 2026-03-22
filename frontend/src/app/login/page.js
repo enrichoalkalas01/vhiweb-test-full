@@ -3,9 +3,10 @@
 import { useState } from "react"
 import { useDispatch } from "react-redux"
 import { useRouter } from "next/navigation"
-import axios from "axios"
+import Link from "next/link"
 import Swal from 'sweetalert2'
 import { setUser } from "@/redux/reducers/auth"
+import api from "@/lib/api"
 
 export default function LoginPage() {
     const dispatch = useDispatch()
@@ -20,12 +21,7 @@ export default function LoginPage() {
         setLoading(true)
 
         try {
-            const response = await axios({
-                url: `${process.env.NEXT_PUBLIC_BASE_URL_API}/authentication/login`,
-                method: 'post',
-                headers: { 'Content-Type': 'application/json' },
-                data: JSON.stringify({ username, password }),
-            })
+            const response = await api.post('/authentication/login', { username, password })
 
             const data = response?.data?.data
             const token = data?.token
@@ -123,9 +119,9 @@ export default function LoginPage() {
 
                 <p className="mt-6 text-center text-sm text-gray-500">
                     Don&apos;t have an account?{' '}
-                    <a href="/register" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                    <Link href="/register" className="font-semibold text-indigo-600 hover:text-indigo-500">
                         Register here
-                    </a>
+                    </Link>
                 </p>
             </div>
         </div>

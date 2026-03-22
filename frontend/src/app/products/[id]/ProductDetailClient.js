@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import Link from 'next/link'
 import Swal from 'sweetalert2'
@@ -10,7 +10,8 @@ import api from '@/lib/api'
 const EMPTY_FORM = { title: '', slug: '', description: '', price: '', stock: '' }
 
 export default function ProductDetailClient() {
-    const { id } = useParams()
+    const pathname = usePathname() // e.g. /products/abc123
+    const id = pathname.split('/').filter(Boolean).pop()
     const router = useRouter()
     const { isAuthenticated } = useSelector((state) => state.auth)
 

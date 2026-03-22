@@ -1,17 +1,14 @@
-import { combineReducers, applyMiddleware } from 'redux'
+import { combineReducers } from 'redux'
 import { configureStore } from '@reduxjs/toolkit'
 
-// Reducers
 import template from './reducers/template'
+import auth from './reducers/auth'
 
-// Setup Reducers For Store
-let Reducers = {
-    template: template
-}
+const rootReducer = combineReducers({
+    template,
+    auth,
+})
 
-const rootReducer = combineReducers(Reducers) // Combining Reducer To Redux
-
-// ## Default 1 ##
 const Store = configureStore({
     reducer: rootReducer,
 })

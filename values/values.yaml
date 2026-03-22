@@ -1,0 +1,105 @@
+# ==============================================
+# HELM VALUES — vhiweb-test-full
+# ==============================================
+
+appName: vhiweb-test-full
+namespace: portofolio
+
+replicaCount: 1
+
+# Image Configuration
+# Build image for K8s with:
+#   docker build \
+#     --build-arg NEXT_BASE_PATH=/portofolio/show/vhiweb-test-full \
+#     --build-arg NEXT_PUBLIC_BASE_URL_API=/portofolio/show/vhiweb-test-full/api/v1 \
+#     -t 192.168.20.21/other/vhiweb-test-full:1.0.0 .
+#   docker push 192.168.20.21/other/vhiweb-test-full:1.0.0
+image:
+    repository: 192.168.20.21/other/vhiweb-test-full
+    tag: "1.0.0"
+    pullPolicy: Always
+
+imagePullSecrets:
+    - name: harbor-creds
+
+nameOverride: ""
+fullnameOverride: ""
+
+containerPort: 5000
+
+service:
+    type: NodePort
+    port: 5000
+    targetPort: 5000
+    nodePort: 30234
+
+ingress:
+    enabled: true
+    className: nginx
+    annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+        nginx.ingress.kubernetes.io/use-regex: "true"
+    hosts:
+        - host: ""
+          paths:
+              - path: /portofolio/show/vhiweb-test-full(/|$)(.*)
+                pathType: ImplementationSpecific
+    tls: []
+
+probe:
+    enabled: true
+    liveness:
+        path: /
+        port: 5000
+    readiness:
+        path: /
+        port: 5000
+
+resources:
+    requests:
+        cpu: 100m
+        memory: 256Mi
+    limits:
+        cpu: 500m
+        memory: 512Mi
+
+# Autoscaling (disabled — aktifkan jika traffic tinggi)
+autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+
+# Environment variables (non-sensitive)
+env:
+    - name: NODE_ENV
+      value: "production"
+    - name: PORT
+      value: "5000"
+
+# Sensitive vars (MongoDBURL, SECRET_KEY) dibaca dari Secret.
+# Buat secret dulu SEBELUM deploy:
+#
+#   kubectl create secret generic vhiweb-secrets \
+#     --from-literal=SECRET_KEY=vhiweb-secret-2024 \
+#     --from-literal=MongoDBURL="mongodb+srv://user:pass@cluster/vhiweb" \
+#     -n portofolio
+#
+envFrom:
+    - secretRef:
+        name: vhiweb-secrets
+
+volumeMounts: []
+volumes: []
+hostAliases: []
+nodeSelector: {}
+tolerations: []
+affinity: {}
+podSecurityContext: {}
+securityContext: {}
+
+serviceAccount:
+    create: false
+    name: ""
+    annotations: {}

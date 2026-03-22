@@ -1,5 +1,6 @@
 import localFont from "next/font/local"
 import { Providers } from "@/redux/provider"
+import Navbar from "@/components/Navbar"
 import 'sweetalert2/src/sweetalert2.scss'
 import "./globals.css"
 
@@ -23,11 +24,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
     return (
         <html lang="en">
-            <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-            >
+            <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}>
                 <Providers>
-                    {children}
+                    <Navbar />
+                    <main>
+                        {children}
+                    </main>
                 </Providers>
             </body>
         </html>

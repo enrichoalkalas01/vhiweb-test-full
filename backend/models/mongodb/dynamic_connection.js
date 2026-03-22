@@ -10,15 +10,6 @@ const connectToDatabase = async (DBURL) => {
 
         conn.on('connected', () => {
             console.log(`Mongoose connected to ${DBURL}`)
-            // Menutup koneksi setelah 5 detik
-            setTimeout(async () => {
-                try {
-                    await conn.close();
-                    console.log('Mongoose connection closed after 5 seconds');
-                } catch (error) {
-                    console.error('Failed to close connection:', error);
-                }
-            }, 5000)
         })
 
         conn.on('error', (err) => {

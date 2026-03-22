@@ -9,14 +9,12 @@ const {
 
 // Controllers
 const { RegisterUser, LoginUser } = require("../controllers/authentication")
-// const { VerifyAccessToken, CreateAccessToken } = require("../controllers/users/token")
-
-// External Routes
+const { VerifyAccessToken, CreateAccessToken } = require("../controllers/token")
 
 // Routes
 Routes.post("/register", RegisterUser)
 Routes.post("/login", LoginUser)
-// Routes.post("/access-token", CreateAccessToken)
-// Routes.get("/verify", [CheckAuthorization, VerifyAuthorization], VerifyAccessToken)
+Routes.post("/access-token", CreateAccessToken)
+Routes.get("/verify", [CheckAuthorization, VerifyAuthorization], VerifyAccessToken)
 
 module.exports = Routes

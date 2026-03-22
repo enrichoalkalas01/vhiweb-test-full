@@ -74,6 +74,13 @@ const LoginUser = async (req, res, next) => {
             ]
         })
 
+        if ( !getData ) {
+            throw {
+                name: "Error", status: 400,
+                message: "Username/Password is wrong!",
+            }
+        }
+
         let MatchingPassword = await Bcrypt.compare(password, getData?.password[0])
 
         if ( !MatchingPassword ) {

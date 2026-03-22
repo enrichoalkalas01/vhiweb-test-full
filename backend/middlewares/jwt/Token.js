@@ -28,11 +28,11 @@ const CreateTokenJWTCallback = async (params = {
         if ( expired_type.includes("second") ) {
             newDateData = new Date(now.getTime() + (1000 * expired_number))
         } else if ( expired_type.includes("minute") ) {
-            newDateData = new Date(now.getTime() + (1000 * (expired_number * 60) * 60))
+            newDateData = new Date(now.getTime() + (1000 * 60 * expired_number))
         } else if ( expired_type.includes("hour") ) {
-            newDateData = new Date(now.getTime() + (1000 * (360 * expired_number)))
+            newDateData = new Date(now.getTime() + (1000 * 60 * 60 * expired_number))
         } else if ( expired_type.includes("day") ) {
-            newDateData = new Date().setDate(now.getDate() + 1)
+            newDateData = new Date(now.getTime() + (1000 * 60 * 60 * 24 * expired_number))
         } else if ( expired_type.includes("month") ) {
             let nextMonth = now.getMonth() + expired_number
             let getLastDayDate = new Date(now.getFullYear(), nextMonth + 1, 0)

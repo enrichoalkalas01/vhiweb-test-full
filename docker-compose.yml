@@ -1,6 +1,25 @@
 version: '3.8'
 
 services:
+  # MongoDB service
+  mongodb:
+    image: mongo:7.0
+    container_name: vhiweb-mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: vhiweb
+      MONGO_INITDB_ROOT_PASSWORD: vhiweb123!
+      MONGO_INITDB_DATABASE: vhiweb
+    ports:
+      - "8204:27017"
+    volumes:
+      - mongodb_data:/data/db
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: '512M'
+
   # MySQL service
   mysql:
     image: mysql:8.0
@@ -13,13 +32,11 @@ services:
       MYSQL_PASSWORD: vhiweb123!
     ports:
       - "8201:3306"
-    # volumes:
-    #   - mysql_data:/var/lib/mysql
     deploy:
       resources:
         limits:
-          cpus: '1'  # Maksimal 1 CPU
-          memory: '512M'  # Maksimal 512MB RAM
+          cpus: '1'
+          memory: '512M'
 
   # PHPMyAdmin service
   phpmyadmin:
@@ -36,50 +53,40 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'  # Maksimal 1 CPU
-          memory: '512M'  # Maksimal 512MB RAM
+          cpus: '1'
+          memory: '512M'
 
-  # Backend Express JS
-  backend:
+  # App — Express API + Next.js static frontend (single container)
+  app:
     build:
-      context: ./backend
+      context: .          # root context (needs both frontend/ and backend/)
       dockerfile: Dockerfile
-    container_name: vhiweb-backend
+    container_name: vhiweb-app
     restart: always
     environment:
-      DATABASE_HOST: root
-      DATABASE_USER: root
+      PORT: 5000
+      SECRET_KEY: vhiweb-secret-2024
+      NODE_ENV: production
+      # Use local MongoDB (inside compose network)
+      MongoDBURL: mongodb://vhiweb:vhiweb123!@mongodb:27017/vhiweb?authSource=admin
+      # MySQL (if needed)
+      DATABASE_HOST: mysql
+      DATABASE_USER: vhiweb
       DATABASE_PASSWORD: vhiweb123!
       DATABASE_NAME: vhiweb
-      SECRET_KEY: vhiweb
-      PORT: 5000
     ports:
-      - "8203:5000" # Sesuaikan dengan port yang digunakan oleh Express.js
+      - "8200:5000"   # http://localhost:8200 → frontend + API
     depends_on:
+      - mongodb
       - mysql
     deploy:
       resources:
         limits:
-          cpus: '1'  # Maksimal 1 CPU
-          memory: '512M'  # Maksimal 512MB RAM
-
-  # Front End Next JS
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: vhiweb-frontend
-    restart: always
-    ports:
-      - "8200:3000" # Sesuaikan dengan port yang digunakan oleh Next.js
-    depends_on:
-      - backend
-    deploy:
-      resources:
-        limits:
-          cpus: '1'  # Maksimal 1 CPU
-          memory: '512M'  # Maksimal 512MB RAM
+          cpus: '1'
+          memory: '768M'
 
 volumes:
   mysql_data:
+    external: false
+  mongodb_data:
     external: false

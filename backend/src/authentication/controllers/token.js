@@ -2,11 +2,10 @@ const Bcrypt = require('bcrypt')
 const cryptr = require('cryptr')
 const Cryptr = new cryptr(process.env.SECRET_KEY || "massive-music-secrets!")
 
-const DynamicConnection = require("../../models/MongoDB/dynamic_connection")
-const UserSchema = require("../../models/MongoDB/schema/users")
+const { connectToDatabase: DynamicConnection } = require("../../../models/mongodb/dynamic_connection")
+const UserSchema = require("../../../models/mongodb/schema/users")
 
-const { CreateTokenJWTCallback } = require('../../middlewares/jwt/Token')
-const { VerifyAuthorizationFunction } = require('../../middlewares/jwt/Token')
+const { CreateTokenJWTCallback, VerifyAuthorizationFunction } = require('../../../middlewares/jwt/Token')
 
 const VerifyAccessToken = async (req, res, next) => {
     try {

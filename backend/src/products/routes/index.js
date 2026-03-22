@@ -13,7 +13,7 @@ const ProductControllers = require('../controllers/products')
 Routes.get("/", ProductControllers.ReadList)
 Routes.post("/", [CheckAuthorization, VerifyAuthorization], ProductControllers.Create)
 Routes.get("/:id", ProductControllers.ReadDetail)
-Routes.put("/:id", ProductControllers.Update)
-Routes.delete("/:id", ProductControllers.Delete)
+Routes.put("/:id", [CheckAuthorization, VerifyAuthorization], ProductControllers.Update)
+Routes.delete("/:id", [CheckAuthorization, VerifyAuthorization], ProductControllers.Delete)
 
 module.exports = Routes

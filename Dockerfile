@@ -10,15 +10,7 @@ RUN npm install
 
 COPY frontend/ .
 
-# Pass at build time via --build-arg:
-#   Local Docker  : defaults below (served at /)
-#   Kubernetes    : --build-arg NEXT_BASE_PATH=/portofolio/show/vhiweb-test-full
-#                   --build-arg NEXT_PUBLIC_BASE_URL_API=/portofolio/show/vhiweb-test-full/api/v1
-ARG NEXT_BASE_PATH=""
-ARG NEXT_PUBLIC_BASE_URL_API=/api/v1
-
-ENV NEXT_BASE_PATH=${NEXT_BASE_PATH}
-ENV NEXT_PUBLIC_BASE_URL_API=${NEXT_PUBLIC_BASE_URL_API}
+ENV NEXT_PUBLIC_BASE_URL_API=/portofolio/show/vhiweb-test-full/api/v1
 
 # Output goes to /frontend/out
 RUN npm run build

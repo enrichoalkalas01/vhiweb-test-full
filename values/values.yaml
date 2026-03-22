@@ -60,8 +60,8 @@ resources:
         cpu: 100m
         memory: 256Mi
     limits:
-        cpu: 500m
-        memory: 512Mi
+        cpu: 200m
+        memory: 256Mi
 
 # Autoscaling (disabled — aktifkan jika traffic tinggi)
 autoscaling:
@@ -79,8 +79,6 @@ env:
       value: "5000"
     - name: SECRET_KEY
       value: "vhiweb-secret-2024"
-    - name: NODE_ENV
-      value: "production"
     - name: MongoDBURL
       value: "mongodb://enrichoalkalas01:Kx9mL2nQ7wR5pT3uY6sA1Zv4Bc8Hj0Mf@192.168.20.4:27018/vhiweb?authSource=admin"
     # MySQL (if needed)
@@ -93,27 +91,54 @@ env:
     - name: DATABASE_NAME
       value: "vhiweb"
 
-# Sensitive vars (MongoDBURL, SECRET_KEY) dibaca dari Secret.
-# Buat secret dulu SEBELUM deploy:
-#
-#   kubectl create secret generic vhiweb-secrets \
-#     --from-literal=SECRET_KEY=vhiweb-secret-2024 \
-#     --from-literal=MongoDBURL="mongodb+srv://user:pass@cluster/vhiweb" \
-#     -n portofolio
-#
-envFrom:
-    - secretRef:
-          name: vhiweb-secrets
+# Environment from ConfigMap/Secret
+envFrom: []
+# - configMapRef:
+#     name: app-config
+# - secretRef:
+#     name: app-secret
 
+# Volume Mounts
 volumeMounts: []
-volumes: []
-hostAliases: []
-nodeSelector: {}
-tolerations: []
-affinity: {}
-podSecurityContext: {}
-securityContext: {}
+# - name: config-volume
+#   mountPath: /app/config
 
+# Volumes
+volumes: []
+# - name: config-volume
+#   configMap:
+#     name: app-config
+
+# Host Aliases
+hostAliases: []
+# - ip: "192.168.20.8"
+#   hostnames:
+#     - "kafka.local"
+
+# Node Selector
+nodeSelector: {}
+# disktype: ssd
+
+# Tolerations
+tolerations: []
+# - key: "dedicated"
+#   operator: "Equal"
+#   value: "app"
+#   effect: "NoSchedule"
+
+# Affinity
+affinity: {}
+
+# Pod Security Context
+podSecurityContext: {}
+# fsGroup: 1000
+
+# Container Security Context
+securityContext: {}
+# runAsNonRoot: true
+# runAsUser: 1000
+
+# Service Account
 serviceAccount:
     create: false
     name: ""

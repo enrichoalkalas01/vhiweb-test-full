@@ -77,6 +77,21 @@ env:
       value: "production"
     - name: PORT
       value: "5000"
+    - name: SECRET_KEY
+      value: "vhiweb-secret-2024"
+    - name: NODE_ENV
+      value: "production"
+    - name: MongoDBURL
+      value: "mongodb://enrichoalkalas01:Kx9mL2nQ7wR5pT3uY6sA1Zv4Bc8Hj0Mf@192.168.20.4:27018/vhiweb?authSource=admin"
+    # MySQL (if needed)
+    - name: DATABASE_HOST
+      value: "mysql"
+    - name: DATABASE_USER
+      value: "vhiweb"
+    - name: DATABASE_PASSWORD
+      value: "vhiweb123!"
+    - name: DATABASE_NAME
+      value: "vhiweb"
 
 # Sensitive vars (MongoDBURL, SECRET_KEY) dibaca dari Secret.
 # Buat secret dulu SEBELUM deploy:
@@ -88,7 +103,7 @@ env:
 #
 envFrom:
     - secretRef:
-        name: vhiweb-secrets
+          name: vhiweb-secrets
 
 volumeMounts: []
 volumes: []
